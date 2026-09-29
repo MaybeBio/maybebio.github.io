@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import HorizontalCard from "../components/HorizontalCard.astro";
 import { getCollection } from "astro:content";
 import createSlug from "../lib/createSlug"
+import { categoryLabel } from "../config";
 
 const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
@@ -24,30 +25,31 @@ const last_posts = posts.slice(0, 3);
   </div>
 
   <div>
-    <div class="text-3xl w-full font-bold mb-2">My last projects {"</>"}</div>
+    <div class="text-3xl w-full font-bold mb-2">Selected Projects</div>
   </div>
 
   <HorizontalCard
-    title="Demo Project 1"
-    img="/post_img.webp"
-    desc="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    url="#"
-    badge="NEW"
+    title="pyPaperFlow"
+    img="/proj_paperflow.webp"
+    desc="An automated literature processing platform for scientific researchers. Batch retrieve, fetch, parse, and structure papers from PubMed, arXiv, bioRxiv, ChemRxiv, and DOI-based sources. From paper retrieval to knowledge internalization, automate the heavy lifting and keep the judgment human."
+    url="https://maybebio.github.io/pyPaperFlow/"
+    badge="Paper reading"
   />
   <div class="divider my-0"></div>
   <HorizontalCard
-    title="Demo Project 2"
-    img="/post_img.webp"
-    desc="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    url="#"
+    title="Repowiki-cli"
+    img="/proj_repowiki.webp"
+    desc="Query AI-generated documentation for any public GitHub repository — straight from your terminal. Including three wiki services: DeepWiki · Google Code Wiki · zread.ai."
+    url="https://github.com/MaybeBio/Repowiki-cli"
+    badge="GitHub coding"
   />
   <div class="divider my-0"></div>
   <HorizontalCard
-    title="Demo Project 3"
-    img="/post_img.webp"
-    desc="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    url="#"
-    badge="FOSS"
+    title="Gromacs-Everything-Skill"
+    img="/proj_gromacs.webp"
+    desc="Claude Code skill for Gromacs，designed for Molecular Dynamics Simulation Operation & QA."
+    url="https://github.com/MaybeBio/Gromacs-Everything-Skill"
+    badge="Claude Code skill for Gromacs"
   />
 
   <div>
@@ -64,6 +66,7 @@ const last_posts = posts.slice(0, 3);
           url={"/blog/" + createSlug(post.data.title, post.slug)}
           target="_self"
           badge={post.data.badge}
+          category={categoryLabel(post.data.category)}
         />
         <div class="divider my-0" />
       </>

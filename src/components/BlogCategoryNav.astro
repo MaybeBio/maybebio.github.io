@@ -1,0 +1,30 @@
+---
+import { BLOG_CATEGORIES } from "../config";
+
+const { active } = Astro.props;
+
+const items = [
+  { key: "all", label: "All", href: "/blog/" },
+  ...BLOG_CATEGORIES.map((c) => ({
+    key: c.key,
+    label: c.label,
+    href: `/blog/category/${c.key}`,
+  })),
+];
+---
+
+<div class="flex flex-wrap gap-2 mb-6">
+  {
+    items.map((item) => (
+      <a
+        href={item.href}
+        class:list={[
+          "btn btn-sm",
+          active === item.key ? "btn-neutral" : "btn-ghost",
+        ]}
+      >
+        {item.label}
+      </a>
+    ))
+  }
+</div>

@@ -1,4 +1,6 @@
 ---
+import { BLOG_CATEGORIES } from "../config";
+
 const { sideBarActiveItemID } = Astro.props;
 const activeClass = "bg-base-300"; // For primary color replace with `active` class
 ---
@@ -6,7 +8,24 @@ const activeClass = "bg-base-300"; // For primary color replace with `active` cl
 <ul class="menu grow shrink menu-md overflow-y-auto">
     <li><a class="py-3 text-base" id="home" href="/">Home</a></li>
     <li><a class="py-3 text-base" id="projects" href="/projects">Projects</a></li>
-    <li><a class="py-3 text-base" id="blog" href="/blog/">Blog</a></li>
+    <li>
+        <a class="py-3 text-base" id="blog" href="/blog/">Blog</a>
+        <ul>
+            {
+                BLOG_CATEGORIES.map((c) => (
+                    <li>
+                        <a
+                            class="py-2 text-base"
+                            id={`blog-${c.key}`}
+                            href={`/blog/category/${c.key}`}
+                        >
+                            {c.label}
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+    </li>
     <li><a class="py-3 text-base" id="cv" href="/cv">CV</a></li>
     <li>
         <a
