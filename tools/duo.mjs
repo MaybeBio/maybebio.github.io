@@ -9,7 +9,7 @@
 // 默认 public/beyond；写带 / 的路径则按仓库根目录解析。
 // 输出在 stdout（可直接重定向），比例表和提醒在 stderr。
 
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
@@ -54,6 +54,7 @@ const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, 
 
 const items = [];
 const warns = [];
+const missing = [];
 let sum = 0;
 
 for (const { file, caption } of files) {
@@ -64,8 +65,8 @@ for (const { file, caption } of files) {
   try {
     meta = await sharp(abs).metadata();
   } catch {
-    warns.push(`找不到或读不了：${rel}`);
-    process.exit(1);
+    missing.push(rel);
+    continue;
   }
   if (!meta.width || !meta.height) warns.push(`读不到尺寸：${rel}`);
 
@@ -81,6 +82,19 @@ for (const { file, caption } of files) {
   else if (kb > 400) warns.push(`${file} 有 ${kb.toFixed(0)} KB，偏大`);
 
   items.push({ url, caption, r, w: meta.width, h: meta.height, kb });
+}
+
+if (missing.length) {
+  console.error("读不到这些图（文件名或路径不对）：");
+  for (const m of missing) console.error("  " + m);
+  const abs = path.resolve(ROOT, dir);
+  try {
+    console.error(`\n${path.relative(ROOT, abs)}/ 里现有：`);
+    console.error("  " + readdirSync(abs).sort().join("  "));
+  } catch {
+    console.error(`\n${path.relative(ROOT, abs)}/ 这个目录也不存在`);
+  }
+  process.exit(1);
 }
 
 const w = Math.max(...items.map((i) => i.url.length));
