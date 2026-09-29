@@ -1,7 +1,8 @@
 ---
 const { title, img, desc, url, badge, tags, category, target = "_blank" } = Astro.props;
 import { Image } from "astro:assets";
-const tag_url = url.split("/").slice(0, -1).join("/") + "/tag";
+// 取第一段，不是去掉末段：文章 url 形如 /blog/<category>/<slug>，标签页固定在 /blog/tag/<tag>
+const tag_url = "/" + url.split("/")[1] + "/tag";
 ---
 
 <div
