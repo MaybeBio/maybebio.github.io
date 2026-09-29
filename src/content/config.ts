@@ -15,6 +15,10 @@ export type BlogSchema = z.infer<typeof blogSchema>;
 
 const blogCollection = defineCollection({ schema: blogSchema });
 
+// Beyond 不设 schema：md 文件里不写 frontmatter，列表标题直接取文件名
+const beyondCollection = defineCollection({});
+
 export const collections = {
     'blog': blogCollection,
+    'beyond': beyondCollection,
 }

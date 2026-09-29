@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getBeyondEntries } from "../../lib/beyondEntries";
+
+// 列表标题 = 文件名（不含扩展名）。改标题 = 重命名 md 文件。
+const entries = await getBeyondEntries();
+---
+
+<BaseLayout title="Beyond" sideBarActiveItemID="beyond">
+  <div>
+    <div class="text-3xl w-full font-bold mb-5">Beyond the Bench</div>
+  </div>
+
+  {
+    entries.length === 0 ? (
+      <p>还没有内容。在 src/content/beyond/ 放 .md 文件即可。</p>
+    ) : (
+      <ul>
+        {entries.map((entry) => (
+          <>
+            <li>
+              <a
+                href={`/beyond/${entry.slug}`}
+                class="block rounded-lg bg-base-100 p-4 text-xl font-bold transition ease-in-out hover:scale-[102%] hover:shadow-xl"
+              >
+                {entry.title}
+              </a>
+            </li>
+            <div class="divider my-0" />
+          </>
+        ))}
+      </ul>
+    )
+  }
+</BaseLayout>

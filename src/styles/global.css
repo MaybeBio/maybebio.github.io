@@ -1,3 +1,73 @@
 .time-line-container>div:last-child .education__time>.education__line {
     display: none;
 }
+
+/* 并排插图：preflight 把 img 设成 display:block，默认会各占一行。
+   在 md 里写 <div class="img-row"> 包住多张 <img width="..."> 即可横向排列。 */
+.img-row {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin: 1.8em 0;
+}
+
+.img-row img {
+    margin: 0;
+}
+
+/* 并排图片：等高、不裁切、永远一行、自动铺满栏宽。结构：
+     <div class="duo">
+       <div style="--r:0.714"><img src="..."><div>说明文字</div></div>
+       ...
+     </div>
+   --r = 该图 宽/高。每格宽度按 --r 分，高度就会自动相等：
+   格子宽 = (栏宽 - 间隙) × r/Σr，图高 = 格子宽 / r = (栏宽 - 间隙) / Σr —— 与 r 无关。
+   所以张数和比例都不用预先算，就是「谁宽谁占得多」。
+   比例数字别手抄，用 node tools/duo.mjs 生成整块。
+
+   栏宽上限 750px，图再多也排得下（不像按高度排会折行）。
+   副作用：高度随张数变（2 张竖版 ≈ 500px 高，4 张 ≈ 210px 高）。
+   只放一张时另走一条路：按原尺寸居中显示（不放大、不拉满），说明照样居中。
+   窄屏（<768px）：改成竖排，每张按原比例铺满一行。 */
+.duo {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 1.8em 0;
+}
+
+/* 乘 100 是为了绕开 flexbox 的一条规则：所有 flex-grow 之和小于 1 时，
+   只分配 Σgrow × 剩余空间。单张竖图 Σr ≈ 0.7 时就只铺了 70% 宽。
+   按比例乘积只会等比放大，不改分配结果。 */
+.duo>* {
+    flex: calc(var(--r) * 100) 1 0;
+    min-width: 0;
+    text-align: center;
+}
+
+/* 单张没有「比例分配」可言，按比例撑满只会把图放大到 750px 宽（比原图还大，
+   会糊）。改成按内容排（flex-basis:auto），就退回原尺寸；超过栏宽时才缩。 */
+.duo>*:only-child {
+    flex: 0 1 auto;
+}
+
+/* 说明文字撑不宽格子了：flex-basis 是 0，宽度只由 --r 决定，
+   内容再长也影响不到布局（以前那套 width:0/min-width:100% 的 hack 不需要了）。 */
+.duo img {
+    width: 100%;
+    height: auto;
+    margin: 0;
+}
+
+@media (max-width: 767px) {
+    .duo {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .duo>* {
+        flex: 0 0 auto;
+    }
+}

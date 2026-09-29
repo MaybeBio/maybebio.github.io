@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getBeyondEntries } from "../../lib/beyondEntries";
+
+export async function getStaticPaths() {
+  const entries = await getBeyondEntries();
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<BaseLayout title={entry.title} sideBarActiveItemID="beyond">
+  <article class="prose prose-lg max-w-[750px] prose-img:mx-auto">
+    <Content />
+  </article>
+</BaseLayout>
