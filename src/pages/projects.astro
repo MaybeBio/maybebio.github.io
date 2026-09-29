@@ -5,7 +5,7 @@ import HorizontalCard from "../components/HorizontalCard.astro";
 
 <BaseLayout title = "Projects" sideBarActiveItemID="projects">
   <div>
-    <div class="text-3xl w-full font-bold mb-5">Projects Header</div>
+    <div class="text-3xl w-full font-bold mb-5">Research tools</div>
   </div>
 
   <HorizontalCard
@@ -24,28 +24,30 @@ import HorizontalCard from "../components/HorizontalCard.astro";
   />
 
   <div>
-    <div class="text-3xl w-full font-bold mb-5 mt-10">Projects Header</div>
+    <div class="text-3xl w-full font-bold mb-5 mt-10">Research Automation</div>
   </div>
 
   <HorizontalCard
-    title="Demo Project 3"
-    img="/post_img.webp"
-    desc="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    url="#"
-    badge="FOSS"
+    title="Daily-GitHub-AI4Bio"
+    img="/proj_daily_github.webp"
+    desc="A template to capture GitHub academic community activity for protein structural AI. It centralizes fragmented research signals, delivering a readable timeline for tracking field developments and discovering emerging trends."
+    url="https://github.com/MaybeBio/Daily-GitHub-AI4Bio"
+    badge="GitHub Trending Automation"
   />
   <div class="divider my-0"></div>
   <HorizontalCard
-    title="Demo Project 4"
-    img="/post_img.webp"
-    desc="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    url="#"
+    title="Daily-Paper-Agent-Template"
+    img="/proj_paper_agent.webp"
+    desc="Biomedical × Computational Interdisciplinary Literature Auto-Tracking + AI Deep Reading Template. Automatically track the latest papers on PubMed · arXiv · bioRxiv · medRxiv · chemRxiv periodically via GitHub Actions, archive the documents and generate weekly Issue reports. An LLM produces a “score + one-sentence summary + abstract translation + 16-section Paper Card + reviewer evaluation” for each paper. A fully searchable GitHub Pages site is deployed, and Zotero is integrated for literature screening and library import."
+    url="https://github.com/MaybeBio/Daily-Paper-Agent-Template"
+    badge="Paper Automation with AI"
   />
   <div class="divider my-0"></div>
   <HorizontalCard
-    title="Demo Project 5"
-    img="/post_img.webp"
-    desc="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    url="#"
+    title="Daily-Paper-noAgent-Template"
+    img="/proj_paper.webp"
+    desc="Automated Literature Alert Template for Biomedical and Computational Interdisciplinary Research. Automatically track the latest papers on PubMed · arXiv · bioRxiv · medRxiv · chemRxiv periodically via GitHub Actions, save duplicates, generate weekly Issue reports, and leverage Zotero and AI tools for screening and intensive reading."
+    url="https://github.com/MaybeBio/Daily-Paper-noAgent-Template"
+    badge="Paper Automation"
   />
 </BaseLayout>
