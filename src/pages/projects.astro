@@ -4,6 +4,37 @@ import HorizontalCard from "../components/HorizontalCard.astro";
 ---
 
 <BaseLayout title = "Projects" sideBarActiveItemID="projects">
+
+  <div>
+    <div class="text-3xl w-full font-bold mb-5">Protein structure + AI</div>
+  </div>
+
+  <HorizontalCard
+    title="AlphaFold3-SeqVisToolkit"
+    img="/proj_af3.webp"
+    desc="A lightweight toolkit for visualizing and analyzing AlphaFold3 prediction outputs."
+    url="https://github.com/MaybeBio/AlphaFold3-SeqVisToolkit"
+    badge="AlphaFold3"
+  />
+  <div class="divider my-0"></div>
+  <HorizontalCard
+    title="Repowiki-cli"
+    img="/proj_repowiki.webp"
+    desc="Query AI-generated documentation for any public GitHub repository — straight from your terminal. Including three wiki services: DeepWiki · Google Code Wiki · zread.ai."
+    url="https://github.com/MaybeBio/Repowiki-cli"
+    badge="GitHub coding"
+  />
+  <div class="divider my-0"></div>
+  <HorizontalCard
+    title="GhResearcher"
+    img="/proj_gh.webp"
+    desc="A powerful GitHub Code & Repo Analysis CLI for Researchers, designed to track activities, scrape and parse repository contexts, and search intelligently—without leaving YOUR terminal."
+    url="https://github.com/MaybeBio/GhResearcher"
+    badge="GitHub trending"
+  />
+
+
+
   <div>
     <div class="text-3xl w-full font-bold mb-5">Research tools</div>
   </div>
@@ -22,6 +53,30 @@ import HorizontalCard from "../components/HorizontalCard.astro";
     desc="Query AI-generated documentation for any public GitHub repository — straight from your terminal. Including three wiki services: DeepWiki · Google Code Wiki · zread.ai."
     url="https://github.com/MaybeBio/Repowiki-cli"
     badge="GitHub coding"
+  />
+  <div class="divider my-0"></div>
+  <HorizontalCard
+    title="GhResearcher"
+    img="/proj_gh.webp"
+    desc="A powerful GitHub Code & Repo Analysis CLI for Researchers, designed to track activities, scrape and parse repository contexts, and search intelligently—without leaving YOUR terminal."
+    url="https://github.com/MaybeBio/GhResearcher"
+    badge="GitHub trending"
+  />
+  <div class="divider my-0"></div>
+  <HorizontalCard
+    title="LibInspector"
+    img="/proj_pylib.webp"
+    desc="From 'Black Box' to 'Glass Box': A Python library inspection tool. Turn passive code reading into active architectural exploration."
+    url="https://github.com/MaybeBio/LibInspector"
+    badge="Python AST analysis"
+  />
+  <div class="divider my-0"></div>
+  <HorizontalCard
+    title="Repo-Inspector"
+    img="/proj_pyrepo.webp"
+    desc="Repo-Inspector helps developers and reviewers quickly understand a Python repository. It produces a concise static analysis report and — optionally — deeper runtime inspection output by integrating with LibInspector."
+    url="https://github.com/MaybeBio/Repo-Inspector"
+    badge="Python repository analysis"
   />
 
   <div>
