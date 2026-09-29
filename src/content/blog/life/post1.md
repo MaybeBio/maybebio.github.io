@@ -2,7 +2,6 @@
 title: "存在主义是一种人道主义"
 description: "本文节选自让 - 保罗・萨特《存在主义是一种人道主义》"
 pubDate: "Sep 10 2022"
-category: "life"
 tags: ["存在主义", "人道主义"]
 ---
 

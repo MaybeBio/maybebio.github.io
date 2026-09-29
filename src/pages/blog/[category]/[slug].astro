@@ -1,0 +1,40 @@
+---
+import { CollectionEntry } from "astro:content";
+import { BlogSchema } from "../../../content/config";
+import PostLayout from "../../../layouts/PostLayout.astro";
+import createSlug from "../../../lib/createSlug"
+import { getBlogPosts } from "../../../lib/blogPosts";
+
+export async function getStaticPaths() {
+  const postEntries = await getBlogPosts();
+  return postEntries.map((entry) => {
+    const [category, ...rest] = entry.slug.split("/");
+    return {
+      params: { category, slug: createSlug(entry.data.title, rest.join("/")) },
+      props: { entry, category },
+    };
+  });
+}
+
+interface Props {
+  entry: CollectionEntry<"blog">;
+  category: string;
+}
+
+const { entry, category } = Astro.props;
+const post: BlogSchema = entry.data;
+const { Content } = await entry.render();
+---
+
+<PostLayout
+  title={post.title}
+  description={post.description}
+  pubDate={post.pubDate}
+  heroImage={post.heroImage}
+  updatedDate={post.updatedDate}
+  badge={post.badge}
+  category={category}
+  tags={post.tags}
+>
+  <Content />
+</PostLayout>
