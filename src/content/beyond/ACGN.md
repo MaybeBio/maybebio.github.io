@@ -160,3 +160,20 @@
 > 火凤是个异类，相较于《三国演义》之于《三国志》更像是架空历史的武侠+权谋作品，但说回来底子又是偏向于香港武侠风格。
 
 文化底蕴、历史积淀，不说了 😋
+
+## Vtuber 
+
+> VTuber（虚拟实况主，全称为 Virtual YouTuber）是指使用虚拟人物形象在网络平台上进行直播或视频创作的线上演艺人员。
+>
+> 我目前GitHub头像里的人物形象就是雪王yukie 😆
+
+<div class="duo">
+  <div style="--r:0.930">
+    <img src="/beyond/yukie.webp">
+    <div>雪绘 Yukie</div>
+  </div>
+  <div style="--r:1.774">
+    <img src="/beyond/mingqian.webp">
+    <div>明前奶绿</div>
+  </div>
+</div>
