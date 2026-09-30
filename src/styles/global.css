@@ -4,11 +4,47 @@
 
 /* Beyond 列表页：main 在 md 以上是 flex item，宽度由内容撑（内容窄时整页只有
    355px，四周一大片空白）。这里让它铺满内容区，并解掉 lg:max-w-[900px] 那个上限，
-   通栏 hero 才能真的顶到内容区边缘。正文靠 .beyond-index 里面自己限宽居中。
+   通栏背景才能真的顶到内容区边缘。正文靠 .beyond-index 里面自己限宽居中。
    只在这一页生效，不动 BaseLayout，其它页面的 main 宽度不变。 */
 main:has(.beyond-index) {
     flex: 1;
     max-width: none;
+}
+
+/* 整页夜空背景（图由 tools/make-bg.sh 生成）。
+   fixed：画不动、内容在画上滑过，滚到底也是一幅完整的景。 */
+body:has(.beyond-index) {
+    background-color: #10142a;
+    background-image: url("/beyond/bg.webp");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* DaisyUI 会给 html 铺一层不透明的 base-100。html 有显式背景时，body 的背景
+   不会传播到画布，内容比视口短时（窄屏实测 body 只有 814px）底下就露出一条白边。
+   置为 transparent 让 body 那张图接管整个视口。 */
+html:has(.beyond-index) {
+    background-color: transparent;
+}
+
+/* 撬开 BaseLayout 里两层不透明底色，否则背景被盖住看不见。 */
+body:has(.beyond-index) .drawer,
+body:has(.beyond-index) .drawer-content {
+    background-color: transparent;
+}
+
+/* 侧边栏和窄屏顶栏本来是实心浅色。直接透明会让深色文字压在夜空上看不清，
+   所以改成半透明浅色 + 毛玻璃：oklch(var(--b1|b2) / α) 就是 DaisyUI 的
+   base-100/200，写变量而不是写死白色，换主题不用改这里。 */
+body:has(.beyond-index) .drawer-side aside {
+    background-color: oklch(var(--b2) / 0.72);
+    backdrop-filter: blur(12px);
+}
+
+body:has(.beyond-index) .drawer-content > .sticky {
+    background-color: oklch(var(--b1) / 0.72);
 }
 
 /* 并排插图：preflight 把 img 设成 display:block，默认会各占一行。

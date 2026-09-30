@@ -8,54 +8,62 @@ const entries = await getBeyondEntries();
 
 <BaseLayout title="Beyond" sideBarActiveItemID="beyond">
   <div class="beyond-index">
-    {/* 通栏 hero。两个负边距都是在抵消 main 自己的内边距（p-6 / pt-10），
-        这样它铺满内容区并贴顶，而不会像 100vw 那样伸到侧边栏底下、
-        也不会在窄屏多出横向滚动条。背景图换成自己的：
-        覆盖 public/beyond/bg.webp 即可，代码不用动（底下垫了渐变，图丢了也不难看）。 */}
+    {/* 标题直接压在整页夜空上，没有独立图带也就没有硬边。
+        整页背景是 body 上 fixed 的那张（见 global.css），这里只负责：
+        1. -mx-6 / -mt-10 抵消 main 的内边距，让标题区铺满内容区并贴顶
+        2. 顶部压一层向下淡出的暗色，保证白字在任何视口比例下都够稳
+           （原来是整条 0.86 的遮罩，实测把背景压到亮度 0.023、图几乎看不见了） */}
     <div
-      class="-mx-6 -mt-10 flex items-center justify-center bg-cover bg-center px-6 py-24 lg:py-32"
-      style="background-image: linear-gradient(to top, rgba(8, 12, 18, 0.86), rgba(8, 12, 18, 0.5) 55%, rgba(8, 12, 18, 0.3)), url('/beyond/bg.webp')"
+      class="-mx-6 -mt-10 px-6 pb-20 pt-24 lg:pb-28 lg:pt-32"
+      style="background-image: linear-gradient(to bottom, rgba(8, 10, 24, 0.62), rgba(8, 10, 24, 0.22) 58%, rgba(8, 10, 24, 0))"
     >
-      <div class="text-center text-white">
+      {/* drop-shadow 是兜底：视口比例一变，背景图的裁切位置就变，不能只靠构图避让 */}
+      <div class="text-center text-white drop-shadow-[0_1px_10px_rgba(0,0,0,0.6)]">
         <h1 class="text-4xl font-bold tracking-tight lg:text-5xl">Beyond the Bench</h1>
-        <p class="mt-4 text-base text-white/75 lg:text-lg">工作之外的一些记录</p>
+        <p class="mt-4 text-base text-white/80 lg:text-lg">工作之外的一些生活记录&兴趣爱好😋</p>
       </div>
     </div>
 
-    <div class="mx-auto mt-12 max-w-[900px]">
-      <div class="flex items-baseline justify-between">
-        <h2 class="text-2xl font-bold">Entries</h2>
-        <span class="text-sm text-base-content/45">{entries.length} 个条目</span>
-      </div>
+    {/* 条目浮在画上：半透明毛玻璃面板。背景图是 fixed 的，滚动时画不动、
+        面板从画上滑过，毛玻璃会把底下的山色糊开。 */}
+    <div class="mx-auto max-w-[900px] pb-28">
+      <div
+        class="rounded-2xl border border-base-300/70 bg-base-100/80 p-5 shadow-2xl backdrop-blur-md lg:p-8"
+      >
+        <div class="flex items-baseline justify-between">
+          <h2 class="text-2xl font-bold">Entries</h2>
+          <span class="text-sm text-base-content/45">{entries.length} 个条目</span>
+        </div>
 
-      {
-        entries.length === 0 ? (
-          <p class="mt-6 text-base-content/60">
-            还没有内容。在 src/content/beyond/ 放 .md 文件即可。
-          </p>
-        ) : (
-          <ol class="mt-2 divide-y divide-base-300 border-t border-base-300">
-            {entries.map((entry, i) => (
-              <li>
-                <a
-                  href={`/beyond/${entry.slug}`}
-                  class="group -mx-3 flex items-center gap-4 rounded-lg px-3 py-5 transition ease-in-out hover:bg-base-200"
-                >
-                  <span class="w-7 shrink-0 font-mono text-sm tabular-nums text-base-content/35">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span class="text-xl font-bold transition-transform group-hover:translate-x-1">
-                    {entry.title}
-                  </span>
-                  <span class="ml-auto text-lg text-base-content/30 transition group-hover:translate-x-1 group-hover:text-base-content/70">
-                    →
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ol>
-        )
-      }
+        {
+          entries.length === 0 ? (
+            <p class="mt-6 text-base-content/60">
+              还没有内容。在 src/content/beyond/ 放 .md 文件即可。
+            </p>
+          ) : (
+            <ol class="mt-2 divide-y divide-base-300 border-t border-base-300">
+              {entries.map((entry, i) => (
+                <li>
+                  <a
+                    href={`/beyond/${entry.slug}`}
+                    class="group -mx-3 flex items-center gap-4 rounded-lg px-3 py-5 transition ease-in-out hover:bg-base-200"
+                  >
+                    <span class="w-7 shrink-0 font-mono text-sm tabular-nums text-base-content/35">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span class="text-xl font-bold transition-transform group-hover:translate-x-1">
+                      {entry.title}
+                    </span>
+                    <span class="ml-auto text-lg text-base-content/30 transition group-hover:translate-x-1 group-hover:text-base-content/70">
+                      →
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          )
+        }
+      </div>
     </div>
   </div>
 </BaseLayout>
