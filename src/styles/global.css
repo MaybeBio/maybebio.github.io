@@ -2,6 +2,15 @@
     display: none;
 }
 
+/* Beyond 列表页：main 在 md 以上是 flex item，宽度由内容撑（内容窄时整页只有
+   355px，四周一大片空白）。这里让它铺满内容区，并解掉 lg:max-w-[900px] 那个上限，
+   通栏 hero 才能真的顶到内容区边缘。正文靠 .beyond-index 里面自己限宽居中。
+   只在这一页生效，不动 BaseLayout，其它页面的 main 宽度不变。 */
+main:has(.beyond-index) {
+    flex: 1;
+    max-width: none;
+}
+
 /* 并排插图：preflight 把 img 设成 display:block，默认会各占一行。
    在 md 里写 <div class="img-row"> 包住多张 <img width="..."> 即可横向排列。 */
 .img-row {
