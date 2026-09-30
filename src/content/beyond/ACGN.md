@@ -161,6 +161,31 @@
 
 文化底蕴、历史积淀，不说了 😋
 
+### DC & Marvel
+
+<div class="duo">
+  <div style="--r:0.652">
+    <img src="/beyond/lantern.webp">
+    <div>Green Lantern:Hal Jordan</div>
+  </div>
+  <div style="--r:0.659">
+    <img src="/beyond/superman.webp">
+    <div>Superman:Clark Kent</div>
+  </div>
+  <div style="--r:0.667">
+    <img src="/beyond/watchman.webp">
+    <div>Watchmen</div>
+  </div>
+</div>
+
+> 仅作为纪念，当时我感兴趣的角色主要是DC的绿灯侠、超人、幽灵。
+>
+> 喜欢的大事件是绿灯主刊的《至黑之夜/Blackest Night》、《初灯之怒/Wrath of the First Lantern》，都是由 Geoff Johns 编写的，绿灯侠的粉丝们都知道他是绿灯侠的救世主 😆
+>
+> 还有个闪电侠主刊的大事件《闪点/Flashpoint》，也称之为闪电悖论/Flashpoint Paradox，是DC宇宙的重启之作
+
+初中时接触了DC，好友喜欢看Marvel，当时互相安利了一波（可惜没有坚持下去，而且至今我对漫威都不感冒），后来Marvel的电影、电视剧和游戏越来越多，DC的电影、电视剧越来越拉，Marvel的粉丝越来越多，DC的粉丝越来越少 😆
+
 ## Vtuber 
 
 > VTuber（虚拟实况主，全称为 Virtual YouTuber）是指使用虚拟人物形象在网络平台上进行直播或视频创作的线上演艺人员。
