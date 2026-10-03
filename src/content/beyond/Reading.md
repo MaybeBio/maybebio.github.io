@@ -239,6 +239,10 @@
     <img src="/beyond/diguo.webp">
     <div>阿西莫夫的银河帝国</div>
   </div>
+  <div style="--r:0.657">
+    <img src="/beyond/shandian.webp">
+    <div>球状闪电</div>
+  </div>
 </div>
 
 
