@@ -43,6 +43,12 @@ body:has(.beyond-index) .drawer-side aside {
     backdrop-filter: blur(12px);
 }
 
+/* 侧边栏底部那两行（渐隐遮罩 + 图标行）自带实心 bg-base-200，
+   侧边栏整体透明后它们会在底部留一条不透明色带，跟着调成同一透明度。 */
+body:has(.beyond-index) .drawer-side .bg-base-200 {
+    background-color: oklch(var(--b2) / 0.72);
+}
+
 body:has(.beyond-index) .drawer-content > .sticky {
     background-color: oklch(var(--b1) / 0.72);
 }

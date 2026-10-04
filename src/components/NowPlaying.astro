@@ -1,0 +1,634 @@
+---
+import { BACKGROUND_MUSIC } from "../config";
+
+const { tracks, volume, mode } = BACKGROUND_MUSIC;
+---
+
+{
+  tracks.length > 0 && (
+    <div
+      id="now-playing"
+      class="np"
+      /* 关键：不加这个，本站开了 ViewTransitions，切页会换掉整个 body，
+         音频元素跟着被销毁重建 —— 每点一个链接音乐都从头开始。
+         persist 让这个节点跨页存活，所以加上 id 供 Astro 识别。 */
+      transition:persist
+      data-tracks={JSON.stringify(tracks)}
+      data-volume={volume}
+      data-mode={mode}
+    >
+      <audio class="np-audio" preload="none"></audio>
+      <button
+        class="np-toggle mx-3"
+        type="button"
+        aria-pressed="false"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-label="背景音乐播放列表"
+        title="背景音乐"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path>
+        </svg>
+      </button>
+
+      <div class="np-pop" aria-label="背景音乐播放器">
+        <ul class="np-list">
+          {
+            tracks.map((t, n) => (
+              <li>
+                <button class="np-track" type="button" data-i={n}>
+                  <span class="np-eq" aria-hidden="true">
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                  </span>
+                  <span class="np-track-name">{t.title}</span>
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="np-ctrl" hidden>
+          <div class="np-btns">
+            <button class="np-btn np-prev" type="button" aria-label="上一首" title="上一首">
+              <svg viewBox="0 0 24 24">
+                <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"></path>
+              </svg>
+            </button>
+            <button class="np-btn np-play" type="button" aria-label="播放" title="播放">
+              <svg class="np-i-play" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"></path>
+              </svg>
+              <svg class="np-i-pause" viewBox="0 0 24 24">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
+              </svg>
+            </button>
+            <button class="np-btn np-next" type="button" aria-label="下一首" title="下一首">
+              <svg viewBox="0 0 24 24">
+                <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path>
+              </svg>
+            </button>
+            <button class="np-btn np-mode" type="button" data-mode={mode} aria-label="播放模式">
+              <svg class="np-mi np-mi-sequential" viewBox="0 0 24 24">
+                <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"></path>
+              </svg>
+              <svg class="np-mi np-mi-shuffle" viewBox="0 0 24 24">
+                <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"></path>
+              </svg>
+              <svg class="np-mi np-mi-loop-one" viewBox="0 0 24 24">
+                <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <div class="np-upnext"></div>
+
+          <div class="np-seekrow">
+            <span class="np-cur">0:00</span>
+            <input
+              class="np-seek"
+              type="range"
+              min="0"
+              max="1000"
+              step="1"
+              value="0"
+              aria-label="播放进度"
+            />
+            <span class="np-dur">0:00</span>
+          </div>
+
+          <div class="np-volrow">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+              ></path>
+            </svg>
+            <input
+              class="np-vol"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={volume}
+              aria-label="音量"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+<script>
+  const init = () => {
+    const root = document.getElementById("now-playing");
+    // 元素跨页存活时这里会再次触发，绑过一次就跳过，否则监听器越叠越多
+    if (!root || root.dataset.npReady) return;
+    root.dataset.npReady = "1";
+
+    const audio = root.querySelector(".np-audio");
+    const btn = root.querySelector(".np-toggle");
+    const ctrl = root.querySelector(".np-ctrl");
+    const trackEls = [...root.querySelectorAll(".np-track")];
+    const playBtn = root.querySelector(".np-play");
+    const prevBtn = root.querySelector(".np-prev");
+    const nextBtn = root.querySelector(".np-next");
+    const modeBtn = root.querySelector(".np-mode");
+    const seek = root.querySelector(".np-seek");
+    const curEl = root.querySelector(".np-cur");
+    const durEl = root.querySelector(".np-dur");
+    const volEl = root.querySelector(".np-vol");
+    const upnextEl = root.querySelector(".np-upnext");
+
+    const tracks = JSON.parse(root.dataset.tracks);
+    const MODES = ["sequential", "shuffle", "loop-one"];
+    const MODE_LABEL = { sequential: "顺序播放", shuffle: "随机播放", "loop-one": "单曲循环" };
+
+    let mode = root.dataset.mode || "shuffle";
+    let i = 0; // 当前曲目下标
+    let upNext = 0; // 提前算好的下一曲（显示什么就播什么）
+    let chosen = false; // 是否已经选过某一首
+    let pinned = false; // 弹层是否被点击钉住
+    let closeTimer;
+    let seeking = false;
+
+    audio.volume = parseFloat(root.dataset.volume) || 0.35;
+    volEl.value = audio.volume;
+    audio.loop = mode === "loop-one"; // 单曲循环交给原生 loop，接缝无缝
+
+    const rand = () => Math.floor(Math.random() * tracks.length);
+
+    const nextIndex = () => {
+      if (tracks.length < 2 || mode === "loop-one") return i;
+      if (mode === "sequential") return (i + 1) % tracks.length;
+      let n;
+      do {
+        n = rand();
+      } while (n === i);
+      return n;
+    };
+
+    const prevIndex = () => {
+      if (tracks.length < 2 || mode === "loop-one") return i;
+      if (mode === "sequential") return (i - 1 + tracks.length) % tracks.length;
+      let n;
+      do {
+        n = rand();
+      } while (n === i);
+      return n;
+    };
+
+    const fmt = (s) => {
+      if (!isFinite(s) || s < 0) return "0:00";
+      const m = Math.floor(s / 60);
+      const ss = Math.floor(s % 60);
+      return m + ":" + String(ss).padStart(2, "0");
+    };
+
+    const renderList = () => {
+      trackEls.forEach((el, n) => {
+        const active = chosen && n === i;
+        el.classList.toggle("is-active", active);
+        if (active) el.setAttribute("aria-current", "true");
+        else el.removeAttribute("aria-current");
+      });
+    };
+
+    const renderUpnext = () => {
+      if (!chosen) return;
+      upnextEl.textContent = "下一首：" + tracks[upNext].title;
+    };
+
+    const renderMode = () => {
+      modeBtn.dataset.mode = mode;
+      const label = "播放模式：" + MODE_LABEL[mode] + "（点击切换）";
+      modeBtn.title = label;
+      modeBtn.setAttribute("aria-label", label);
+    };
+
+    const sync = () => {
+      const on = !audio.paused;
+      root.classList.toggle("np-on", on);
+      btn.setAttribute("aria-pressed", String(on));
+      playBtn.classList.toggle("is-playing", on);
+      const name = chosen ? "：" + tracks[i].title : "";
+      playBtn.setAttribute("aria-label", (on ? "暂停" : "播放") + name);
+      playBtn.title = (on ? "暂停" : "播放") + name;
+    };
+
+    const setTrack = (n, autoplay) => {
+      i = n;
+      audio.src = tracks[i].src;
+      chosen = true;
+      upNext = nextIndex();
+      ctrl.hidden = false;
+      renderList();
+      renderUpnext();
+      sync();
+      if (autoplay) audio.play().catch(() => {});
+    };
+
+    const setMode = (m) => {
+      mode = m;
+      audio.loop = m === "loop-one";
+      if (chosen) upNext = nextIndex();
+      renderMode();
+      renderUpnext();
+    };
+
+    const openPanel = () => {
+      root.classList.add("np-open");
+      btn.setAttribute("aria-expanded", "true");
+    };
+    const closePanel = () => {
+      root.classList.remove("np-open");
+      btn.setAttribute("aria-expanded", "false");
+      pinned = false;
+    };
+
+    // 桌面 hover 开合。用 mouseover/mouseout 而非 enter/leave：♪ 和面板之间
+    // 隔着一道间隙，指针穿过时给 150ms 兜底，进到面板里再取消掉。
+    root.addEventListener("mouseover", () => {
+      clearTimeout(closeTimer);
+      openPanel();
+    });
+    root.addEventListener("mouseout", (e) => {
+      if (root.contains(e.relatedTarget)) return;
+      if (pinned) return;
+      clearTimeout(closeTimer);
+      closeTimer = setTimeout(closePanel, 150);
+    });
+
+    // ♪ 点击：钉住 / 收起。手机没有 hover，就是走这条点按路径。
+    btn.addEventListener("click", () => {
+      if (pinned) {
+        closePanel();
+      } else {
+        pinned = true;
+        openPanel();
+      }
+    });
+
+    // 点面板外部 / Esc 收起
+    document.addEventListener("click", (e) => {
+      if (!root.contains(e.target)) closePanel();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closePanel();
+    });
+
+    // 曲目列表：点哪首播哪首
+    trackEls.forEach((el) => {
+      el.addEventListener("click", () => setTrack(parseInt(el.dataset.i, 10), true));
+    });
+
+    playBtn.addEventListener("click", () => {
+      if (!chosen) {
+        setTrack(0, true);
+      } else if (audio.paused) {
+        // 浏览器可能因为缺用户手势而拒绝，catch 掉免得在控制台报错
+        audio.play().catch(() => {});
+      } else {
+        audio.pause();
+      }
+    });
+    prevBtn.addEventListener("click", () => setTrack(prevIndex(), true));
+    nextBtn.addEventListener("click", () => setTrack(upNext, true));
+    modeBtn.addEventListener("click", () => {
+      setMode(MODES[(MODES.indexOf(mode) + 1) % MODES.length]);
+    });
+
+    // 进度条：拖动时实时 seek，松手结算
+    seek.addEventListener("pointerdown", () => {
+      seeking = true;
+    });
+    seek.addEventListener("input", () => {
+      if (!audio.duration) return;
+      const t = (parseFloat(seek.value) / 1000) * audio.duration;
+      curEl.textContent = fmt(t);
+      audio.currentTime = t;
+    });
+    window.addEventListener("pointerup", () => {
+      if (!seeking) return;
+      seeking = false;
+      if (audio.duration) audio.currentTime = (parseFloat(seek.value) / 1000) * audio.duration;
+    });
+
+    volEl.addEventListener("input", () => {
+      audio.volume = parseFloat(volEl.value);
+    });
+
+    audio.addEventListener("play", sync);
+    audio.addEventListener("pause", sync);
+    audio.addEventListener("loadedmetadata", () => {
+      durEl.textContent = fmt(audio.duration);
+    });
+    audio.addEventListener("timeupdate", () => {
+      if (seeking || !audio.duration) return;
+      seek.value = String((audio.currentTime / audio.duration) * 1000);
+      curEl.textContent = fmt(audio.currentTime);
+    });
+    audio.addEventListener("ended", () => {
+      if (mode === "loop-one") return; // 单曲循环由 audio.loop 接管，不会触发 ended
+      setTrack(upNext, true);
+    });
+
+    renderMode();
+    sync();
+  };
+
+  document.addEventListener("astro:page-load", init);
+</script>
+
+<style>
+  .np {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  /* 点 ♪ 或悬浮时冒出的毛玻璃弹层。侧边栏底部贴着视口底，所以往上弹；
+     z-index 要高过上面那层渐隐遮罩，否则会被盖住。 */
+  .np-pop {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 0;
+    z-index: 50;
+    width: 260px;
+    padding: 8px;
+    border-radius: 14px;
+    border: 1px solid oklch(var(--bc) / 0.12);
+    background: oklch(var(--b1) / 0.6);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    color: oklch(var(--bc) / 0.9);
+    font-size: 0.82rem;
+    line-height: 1.4;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    pointer-events: none;
+  }
+
+  .np-open .np-pop {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .np-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: min(40vh, 220px);
+    overflow-y: auto;
+  }
+
+  .np-track {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 7px 8px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .np-track:hover {
+    background: oklch(var(--bc) / 0.08);
+  }
+
+  .np-track.is-active {
+    color: oklch(var(--p));
+    font-weight: 600;
+  }
+
+  .np-track-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* 当前曲目那行的小跳条，播的时候在跳，暂停就定住 */
+  .np-eq {
+    display: none;
+    align-items: flex-end;
+    gap: 2px;
+    width: 10px;
+    height: 12px;
+    flex: none;
+  }
+
+  .np-track.is-active .np-eq {
+    display: inline-flex;
+  }
+
+  .np-eq i {
+    width: 2px;
+    height: 30%;
+    background: currentColor;
+    animation: np-eq 0.9s ease-in-out infinite;
+  }
+
+  .np-eq i:nth-child(2) {
+    animation-delay: 0.3s;
+  }
+
+  .np-eq i:nth-child(3) {
+    animation-delay: 0.15s;
+  }
+
+  .np:not(.np-on) .np-eq i {
+    animation-play-state: paused;
+  }
+
+  @keyframes np-eq {
+    0%,
+    100% {
+      height: 25%;
+    }
+    50% {
+      height: 100%;
+    }
+  }
+
+  .np-ctrl {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid oklch(var(--bc) / 0.12);
+  }
+
+  .np-ctrl[hidden] {
+    display: none;
+  }
+
+  .np-btns {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .np-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: background 0.15s ease, opacity 0.15s ease;
+  }
+
+  .np-btn:hover {
+    background: oklch(var(--bc) / 0.08);
+    opacity: 1;
+  }
+
+  .np-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  .np-play {
+    color: oklch(var(--p));
+    opacity: 1;
+  }
+
+  .np-play .np-i-pause {
+    display: none;
+  }
+
+  .np-play.is-playing .np-i-play {
+    display: none;
+  }
+
+  .np-play.is-playing .np-i-pause {
+    display: inline;
+  }
+
+  /* 模式按钮只显示当前模式那枚图标 */
+  .np-mode .np-mi {
+    display: none;
+  }
+
+  .np-mode[data-mode="sequential"] .np-mi-sequential,
+  .np-mode[data-mode="shuffle"] .np-mi-shuffle,
+  .np-mode[data-mode="loop-one"] .np-mi-loop-one {
+    display: inline;
+  }
+
+  .np-upnext {
+    font-size: 0.74rem;
+    opacity: 0.65;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .np-seekrow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.85;
+  }
+
+  .np-cur,
+  .np-dur {
+    flex: none;
+    min-width: 28px;
+  }
+
+  .np-dur {
+    text-align: right;
+  }
+
+  .np-seek {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .np-volrow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .np-volrow svg {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    fill: currentColor;
+    opacity: 0.7;
+  }
+
+  .np-vol {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .np-seek,
+  .np-vol {
+    accent-color: oklch(var(--p));
+  }
+
+  .np-toggle {
+    color: inherit;
+    opacity: 0.4;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .np-toggle:hover {
+    opacity: 0.75;
+  }
+
+  .np-on .np-toggle {
+    opacity: 1;
+    animation: np-breathe 2.6s ease-in-out infinite;
+  }
+
+  @keyframes np-breathe {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.14);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .np-on .np-toggle {
+      animation: none;
+    }
+    .np-eq i {
+      animation: none;
+      height: 70%;
+    }
+  }
+</style>
